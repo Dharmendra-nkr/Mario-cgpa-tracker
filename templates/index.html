@@ -1,358 +1,684 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="scroll-smooth" lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Academic Journey - Mario Style CGPA Reveal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #5c94fc;
-      font-family: 'Press Start 2P', monospace;
-      overflow: hidden;
-    }
-    canvas {
-      display: block;
-      margin: 0 auto;
-      image-rendering: pixelated;
-    }
-  </style>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Mario CGPA Tracker - Portfolio Section</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563eb",
+                        "background-light": "#ffffff",
+                        "background-dark": "#0f172a",
+                        "mario-sky": "#5c94fc",
+                        "mario-sky-dark": "#1a1a2e",
+                        "mario-ground": "#d45b12",
+                        "mario-ground-dark": "#005c9e",
+                        "mario-block": "#fb923c",
+                        "mario-block-shadow": "#b45309",
+                    },
+                    fontFamily: {
+                        display: ["'Press Start 2P'", "cursive"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'pixel': 'inset 4px 4px 0px 0px rgba(255,255,255,0.4), inset -4px -4px 0px 0px rgba(0,0,0,0.2)',
+                        'pixel-pressed': 'inset 4px 4px 0px 0px rgba(0,0,0,0.2), inset -4px -4px 0px 0px rgba(255,255,255,0.4)',
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        * {
+            image-rendering: pixelated;
+        }
+        
+        .pixel-text {
+            text-shadow: 2px 2px 0px #000000;
+        }
+        
+        .bg-mario-brick {
+            background-color: #d45b12;
+            background-image: 
+                linear-gradient(45deg, #b45309 25%, transparent 25%, transparent 75%, #b45309 75%, #b45309),
+                linear-gradient(45deg, #b45309 25%, transparent 25%, transparent 75%, #b45309 75%, #b45309);
+            background-position: 0 0, 16px 16px;
+            background-size: 32px 32px;
+        }
+        
+        .dark .bg-mario-brick {
+            background-color: #005c9e;
+            background-image: 
+                linear-gradient(45deg, #004275 25%, transparent 25%, transparent 75%, #004275 75%, #004275),
+                linear-gradient(45deg, #004275 25%, transparent 25%, transparent 75%, #004275 75%, #004275);
+        }
+        
+        @keyframes drift {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100vw); }
+        }
+        
+        .cloud-animate {
+            animation: drift 60s linear infinite;
+        }
+        
+        @keyframes blockHit {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-8px); }
+            50% { transform: translateY(-4px); }
+            75% { transform: translateY(-2px); }
+        }
+        
+        @keyframes sgpaReveal {
+            0% { 
+                transform: translateY(0) scale(1);
+                opacity: 0;
+            }
+            50% { 
+                transform: translateY(-60px) scale(1.3);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(-40px) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes marioJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-100px); }
+        }
+        
+        @keyframes flagSlide {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(200px); }
+        }
+        
+        @keyframes particleBurst {
+            0% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .block-hit {
+            animation: blockHit 0.3s ease-out;
+        }
+        
+        .sgpa-reveal {
+            animation: sgpaReveal 0.6s ease-out forwards;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fb923c;
+            border: 2px solid #000;
+            animation: particleBurst 0.6s ease-out forwards;
+        }
+        
+        .mario-sprite {
+            width: 64px;
+            height: 64px;
+            position: absolute;
+            bottom: 64px;
+            transition: left 0.3s linear;
+        }
+        
+        .mario-walking {
+            animation: walk 0.3s steps(2) infinite;
+        }
+        
+        @keyframes walk {
+            0% { background-position: 0 0; }
+            100% { background-position: -128px 0; }
+        }
+        
+        .play-button {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 4px solid #000;
+            padding: 12px 24px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #000;
+            transition: all 0.1s;
+        }
+        
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0 #000;
+        }
+        
+        .play-button:active {
+            transform: translateY(0);
+            box-shadow: 2px 2px 0 #000;
+        }
+        
+        .play-button.active {
+            background: linear-gradient(135deg, #90EE90, #32CD32);
+        }
+        
+        .controls-hint {
+            position: fixed;
+            top: 170px;
+            right: 30px;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            line-height: 1.8;
+            display: none;
+            border: 2px solid #fff;
+        }
+        
+        .controls-hint.show {
+            display: block;
+        }
+        
+        .brick-container {
+            position: relative;
+        }
+        
+        .brick-sgpa {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .brick-sgpa.revealed {
+            opacity: 1 !important;
+        }
+        
+        .cgpa-display {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        
+        .cgpa-display.revealed {
+            opacity: 1;
+        }
+        
+        .flag-pole-top {
+            transition: transform 0.8s ease-out;
+        }
+    </style>
 </head>
-<body>
-  <script>
-    // =========================================
-    // Academic Journey - Phaser 3 Game
-    // =========================================
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-body antialiased transition-colors duration-300 overflow-hidden">
 
-    // Semester CGPA data
-    const semesterData = [
-      { sem: 1, sgpa: 9.0 },
-      { sem: 2, sgpa: 8.8 },
-      { sem: 3, sgpa: 9.1 },
-      { sem: 4, sgpa: 9.5 },
-      { sem: 5, sgpa: 9.2 },
-      { sem: 6, sgpa: 9.4 },
-      { sem: 7, sgpa: 9.0 },
-      { sem: 8, sgpa: 9.8 },
-      { sem: 9, sgpa: 9.5 },
-      { sem: 10, sgpa: 9.7 }
-    ];
+    <!-- Play Button -->
+    <button id="playButton" class="play-button" onclick="togglePlayMode()">
+        <span class="font-display text-xs pixel-text" id="playButtonText">▶ PLAY</span>
+    </button>
+    
+    <!-- Controls Hint -->
+    <div id="controlsHint" class="controls-hint">
+        ← → MOVE<br>
+        ↑ JUMP
+    </div>
 
-    const GAME_WIDTH = 960;
-    const GAME_HEIGHT = 540;
-    const WORLD_WIDTH = 2200;
-    const GROUND_Y = 460;
+    <!-- Mario Game Section -->
+    <section class="w-full h-screen bg-mario-sky dark:bg-mario-sky-dark overflow-hidden relative flex flex-col justify-end transition-colors duration-500">
+        
+        <!-- Title -->
+        <div class="absolute top-24 left-0 right-0 z-20 text-center pointer-events-none">
+            <h2 class="font-display text-white text-xl md:text-3xl pixel-text tracking-widest uppercase mb-2 drop-shadow-lg">Academic Journey</h2>
+            <p class="font-display text-white/80 text-xs md:text-sm pixel-text drop-shadow-md">Level 1-1: GPA Tracker</p>
+        </div>
+        
+        <!-- Clouds -->
+        <div class="absolute inset-0 z-0 opacity-80 dark:opacity-20 pointer-events-none">
+            <div class="absolute top-20 left-10 cloud-animate" style="animation-duration: 45s;">
+                <svg fill="white" height="32" viewBox="0 0 64 32" width="64">
+                    <path d="M16 16 h32 v16 h-32 z M8 16 h8 v8 h-8 z M48 16 h8 v8 h-8 z M16 8 h32 v8 h-32 z"></path>
+                </svg>
+            </div>
+            <div class="absolute top-40 left-1/2 cloud-animate" style="animation-duration: 65s; animation-delay: -20s;">
+                <svg fill="white" height="48" viewBox="0 0 96 48" width="96">
+                    <path d="M24 24 h48 v24 h-48 z M12 24 h12 v12 h-12 z M72 24 h12 v12 h-12 z M24 12 h48 v12 h-48 z"></path>
+                </svg>
+            </div>
+            <div class="absolute top-60 right-20 cloud-animate" style="animation-duration: 55s; animation-delay: -5s;">
+                <svg fill="white" height="32" viewBox="0 0 64 32" width="64">
+                    <path d="M16 16 h32 v16 h-32 z M8 16 h8 v8 h-8 z M48 16 h8 v8 h-8 z M16 8 h32 v8 h-32 z"></path>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Game Container -->
+        <div id="gameContainer" class="w-full h-full relative z-10">
+            <div class="absolute bottom-16 left-0 right-0 flex items-end justify-start px-8" style="height: 400px;">
+                
+                <!-- Mario Character -->
+                <div id="mario" class="absolute bottom-16 transition-all duration-300" style="left: 50px; width: 48px; height: 48px;">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRj8Kfq-2b8d_ZuIArB5Gm9df7kYylyj8GsWZfnmX713nugZin7QATBZVqjL7ysP-3qDqCQdKfw6oNNi2auZlKFtjJwnkvMV60Zx7rf94AQZUvnwdZXlrS1Ri4Z1dCX9t4A5AG3Qu-eW6zrerS2JJCzRHM98V-Y6UuKl7DEyyLgY4q-0Wf-LB-6024fWKAf4dvU-DZEiM9biLI6p1INvjAffjYK58s_xMvXeInTnKz-LlyxC1jLyIlS8Qyc7PnXcS2rZH0_tdKj1U" 
+                         alt="Mario" class="w-full h-full object-contain drop-shadow-lg"/>
+                </div>
+                
+                <!-- Bricks Container -->
+                <div id="bricksContainer" class="flex items-end gap-12 absolute" style="left: 200px; bottom: 100px;">
+                    {% for sem in semesters %}
+                    <div class="brick-container flex flex-col items-center relative" data-semester="{{ sem.semester }}" data-sgpa="{{ sem.sgpa }}">
+                        <!-- SGPA Display (hidden initially) -->
+                        <div class="brick-sgpa font-display text-[#fb923c] text-lg pixel-text">
+                            {{ sem.sgpa }}
+                        </div>
+                        
+                        <!-- Question Block -->
+                        <div class="brick w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center relative">
+                            <span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+                            <div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+                            <div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+                        </div>
+                        
+                        <!-- Semester Label -->
+                        <span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem {{ sem.semester }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Flag Pole (CGPA) -->
+                <div id="flagPole" class="absolute flex flex-col items-center" style="left: calc(200px + {{ semesters|length * 112 }}px + 300px); bottom: 16px;">
+                    <!-- CGPA Display -->
+                    <div class="cgpa-display absolute top-[-80px] whitespace-nowrap flex flex-col items-center">
+                        <div class="font-display text-white text-3xl md:text-5xl pixel-text" style="text-shadow: 4px 4px 0 #000;">{{ cgpa }}</div>
+                        <div class="font-display text-white text-xs md:text-sm pixel-text bg-black/50 px-3 py-1 mt-2 rounded-full border border-white/20">Overall CGPA</div>
+                    </div>
+                    
+                    <!-- Flag -->
+                    <div class="relative flex flex-col items-center">
+                        <div class="flag-pole-top w-4 h-4 bg-green-500 border-2 border-black rounded-full z-20"></div>
+                        <div class="absolute top-4 left-1/2 w-16 h-16 z-10 origin-left">
+                            <svg class="w-full h-full drop-shadow-md" viewBox="0 0 100 100">
+                                <path d="M0,0 L80,30 L0,60 Z" fill="white" stroke="black" stroke-width="3"></path>
+                            </svg>
+                        </div>
+                        <div class="w-2 h-80 bg-green-600 border-x-2 border-black z-10 shadow-lg"></div>
+                        <div class="w-10 h-10 bg-[#7c7c7c] border-2 border-black z-20 shadow-pixel relative">
+                            <div class="absolute inset-1 border border-white/20"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ground -->
+        <div class="absolute bottom-0 left-0 right-0 h-16 bg-mario-brick z-20 border-t-4 border-black w-full"></div>
+    </section>
 
-    // Simple WebAudio beep for block hit (no external assets)
-    function playBeep(freq = 660, duration = 0.08) {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = freq;
-        gain.gain.value = 0.15;
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
-      } catch (e) {
-        // Audio context may be blocked; ignore
-      }
-    }
-
-    class AcademicJourneyScene extends Phaser.Scene {
-      constructor() {
-        super('AcademicJourney');
-      }
-
-      preload() {
-        // Create a placeholder sprite sheet (3 frames) via canvas
-        const sheetCanvas = document.createElement('canvas');
-        sheetCanvas.width = 96; // 3 frames * 32px
-        sheetCanvas.height = 32;
-        const ctx = sheetCanvas.getContext('2d');
-
-        // Frame 1: idle
-        ctx.fillStyle = '#d32f2f';
-        ctx.fillRect(6, 8, 20, 20);
-        ctx.fillStyle = '#f5c542';
-        ctx.fillRect(10, 4, 12, 8);
-
-        // Frame 2: run1
-        ctx.fillStyle = '#d32f2f';
-        ctx.fillRect(38, 8, 20, 20);
-        ctx.fillStyle = '#f5c542';
-        ctx.fillRect(42, 4, 12, 8);
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(36, 26, 8, 4);
-
-        // Frame 3: run2
-        ctx.fillStyle = '#d32f2f';
-        ctx.fillRect(70, 8, 20, 20);
-        ctx.fillStyle = '#f5c542';
-        ctx.fillRect(74, 4, 12, 8);
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(86, 26, 8, 4);
-
-        const dataURL = sheetCanvas.toDataURL();
-        this.load.spritesheet('player', dataURL, { frameWidth: 32, frameHeight: 32 });
-      }
-
-      create() {
-        // Background
-        this.cameras.main.setBackgroundColor('#5c94fc');
-
-        // World bounds
-        this.physics.world.setBounds(0, 0, WORLD_WIDTH, GAME_HEIGHT);
-        this.cameras.main.setBounds(0, 0, WORLD_WIDTH, GAME_HEIGHT);
-
-        // Title & subtitle (fixed to camera)
-        this.add.text(GAME_WIDTH / 2, 24, 'ACADEMIC JOURNEY', {
-          fontSize: '20px',
-          color: '#ffffff',
-          stroke: '#000000',
-          strokeThickness: 4
-        }).setOrigin(0.5).setScrollFactor(0);
-
-        this.add.text(GAME_WIDTH / 2, 52, 'Level 1-1: GPA Tracker', {
-          fontSize: '10px',
-          color: '#ffffff',
-          stroke: '#000000',
-          strokeThickness: 3
-        }).setOrigin(0.5).setScrollFactor(0);
-
-        // Ground
-        this.ground = this.add.rectangle(WORLD_WIDTH / 2, GROUND_Y + 36, WORLD_WIDTH, 80, 0xd45b12);
-        this.physics.add.existing(this.ground, true);
-
-        // Player
-        this.player = this.physics.add.sprite(80, GROUND_Y - 40, 'player', 0);
-        this.player.setCollideWorldBounds(true);
-        this.player.setGravityY(900);
-        this.player.setDragX(1200);
-        this.player.setMaxVelocity(220, 600);
-
-        // Camera follow
-        this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
-
-        // Collide player with ground
-        this.physics.add.collider(this.player, this.ground);
-
-        // Controls
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-        // Animations
-        this.anims.create({
-          key: 'idle',
-          frames: [{ key: 'player', frame: 0 }],
-          frameRate: 1
+    <script>
+        // Game state
+        let gameState = {
+            mode: 'auto', // 'auto' or 'manual'
+            currentBrick: 0,
+            marioX: 50,
+            marioY: 0,
+            velocityY: 0,
+            isJumping: false,
+            isMovingRight: false,
+            isMovingLeft: false,
+            facing: 'right',
+            autoPlayComplete: false,
+            flagReached: false,
+            bricksHit: new Set(),
+            totalBricks: {{ semesters|length }}
+        };
+        
+        const GRAVITY = 0.8;
+        const JUMP_POWER = -15;
+        const MOVE_SPEED = 5;
+        const BRICK_START_X = 200;
+        const BRICK_SPACING = 112; // 64px brick + 48px gap
+        const BRICK_Y = 100;
+        const MARIO_WIDTH = 48;
+        const MARIO_HEIGHT = 48;
+        
+        // Get DOM elements
+        const mario = document.getElementById('mario');
+        const bricksContainer = document.getElementById('bricksContainer');
+        const playButton = document.getElementById('playButton');
+        const playButtonText = document.getElementById('playButtonText');
+        const controlsHint = document.getElementById('controlsHint');
+        
+        // Keyboard controls
+        const keys = {};
+        
+        window.addEventListener('keydown', (e) => {
+            if (gameState.mode !== 'manual') return;
+            keys[e.key] = true;
+            
+            if ((e.key === ' ' || e.key === 'ArrowUp') && !gameState.isJumping) {
+                jump();
+            }
+            if (e.key === 'ArrowRight') {
+                gameState.isMovingRight = true;
+                gameState.facing = 'right';
+                mario.style.transform = 'scaleX(1)';
+            }
+            if (e.key === 'ArrowLeft') {
+                gameState.isMovingLeft = true;
+                gameState.facing = 'left';
+                mario.style.transform = 'scaleX(-1)';
+            }
         });
-        this.anims.create({
-          key: 'run',
-          frames: [
-            { key: 'player', frame: 1 },
-            { key: 'player', frame: 2 }
-          ],
-          frameRate: 8,
-          repeat: -1
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+            if (e.key === 'ArrowRight') gameState.isMovingRight = false;
+            if (e.key === 'ArrowLeft') gameState.isMovingLeft = false;
         });
-        this.anims.create({
-          key: 'jump',
-          frames: [{ key: 'player', frame: 0 }],
-          frameRate: 1
-        });
-
-        // Blocks group
-        this.blocks = this.physics.add.staticGroup();
-        this.blockMeta = new Map();
-
-        const startX = 300;
-        const spacing = 140;
-        const blockY = 280;
-
-        semesterData.forEach((data, idx) => {
-          const x = startX + idx * spacing;
-
-          const block = this.add.rectangle(x, blockY, 48, 48, 0xfb923c).setStrokeStyle(4, 0x000000);
-          this.blocks.add(block);
-
-          // Question mark
-          const q = this.add.text(x, blockY - 6, '?', {
-            fontSize: '24px',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-          }).setOrigin(0.5);
-
-          // Semester label
-          this.add.text(x, blockY + 48, `Sem ${data.sem}`, {
-            fontSize: '8px',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 3
-          }).setOrigin(0.5);
-
-          // SGPA reveal (hidden initially)
-          const sgpaText = this.add.text(x, blockY - 52, data.sgpa.toFixed(1), {
-            fontSize: '12px',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 3
-          }).setOrigin(0.5);
-          sgpaText.setAlpha(0);
-
-          this.blockMeta.set(block, {
-            triggered: false,
-            sgpaText,
-            qText: q
-          });
-        });
-
-        // Collider: player hits blocks
-        this.physics.add.collider(this.player, this.blocks, this.onBlockHit, null, this);
-
-        // Flag pole
-        this.flagPole = this.add.rectangle(WORLD_WIDTH - 120, GROUND_Y - 80, 10, 200, 0x2e7d32)
-          .setStrokeStyle(2, 0x000000);
-        this.physics.add.existing(this.flagPole, true);
-
-        this.flag = this.add.triangle(WORLD_WIDTH - 100, GROUND_Y - 150, 0, 0, 40, 15, 0, 30, 0xffffff)
-          .setStrokeStyle(2, 0x000000);
-
-        // Flag base
-        this.flagBase = this.add.rectangle(WORLD_WIDTH - 120, GROUND_Y + 8, 40, 40, 0x7c7c7c)
-          .setStrokeStyle(2, 0x000000);
-
-        // End text (hidden)
-        this.endText = this.add.text(WORLD_WIDTH - 240, GROUND_Y - 210, 'LEVEL COMPLETE!', {
-          fontSize: '12px',
-          color: '#ffffff',
-          stroke: '#000000',
-          strokeThickness: 3
-        }).setAlpha(0);
-
-        // End overlap
-        this.physics.add.overlap(this.player, this.flagPole, this.onReachFlag, null, this);
-      }
-
-      onBlockHit(player, block) {
-        const meta = this.blockMeta.get(block);
-        if (!meta || meta.triggered === true) return;
-
-        // Only trigger if player hits from below
-        if (player.body.velocity.y < 0 && player.body.touching.up && block.body.touching.down) {
-          meta.triggered = true;
-
-          // Bounce animation
-          this.tweens.add({
-            targets: block,
-            y: block.y - 8,
-            duration: 100,
-            yoyo: true,
-            ease: 'Quad.easeOut'
-          });
-
-          // Reveal SGPA
-          this.tweens.add({
-            targets: meta.sgpaText,
-            alpha: 1,
-            y: meta.sgpaText.y - 12,
-            duration: 200,
-            ease: 'Quad.easeOut'
-          });
-
-          playBeep(740, 0.08);
+        
+        function togglePlayMode() {
+            if (gameState.mode === 'auto') {
+                // Switch to manual mode
+                gameState.mode = 'manual';
+                playButtonText.textContent = '◼ AUTO';
+                playButton.classList.add('active');
+                controlsHint.classList.add('show');
+                
+                // Reset if auto was complete
+                if (gameState.autoPlayComplete) {
+                    resetGame();
+                }
+            } else {
+                // Switch to auto mode
+                gameState.mode = 'auto';
+                playButtonText.textContent = '▶ PLAY';
+                playButton.classList.remove('active');
+                controlsHint.classList.remove('show');
+                resetGame();
+                startAutoPlay();
+            }
         }
-      }
-
-      onReachFlag() {
-        if (this.levelComplete) return;
-        this.levelComplete = true;
-
-        this.player.setVelocity(0, 0);
-        this.player.anims.play('idle', true);
-
-        // Flag slide down
-        this.tweens.add({
-          targets: this.flag,
-          y: this.flag.y + 120,
-          duration: 600,
-          ease: 'Quad.easeOut'
+        
+        function jump() {
+            if (gameState.isJumping) return;
+            gameState.isJumping = true;
+            gameState.velocityY = JUMP_POWER;
+            playJumpSound();
+        }
+        
+        function createParticles(x, y) {
+            const particles = [];
+            for (let i = 0; i < 6; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.bottom = y + 'px';
+                
+                const angle = (Math.PI / 3) * i;
+                const distance = 30 + Math.random() * 20;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                document.getElementById('gameContainer').appendChild(particle);
+                particles.push(particle);
+                
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+        
+        function hitBrick(brickIndex) {
+            if (gameState.bricksHit.has(brickIndex)) return;
+            
+            gameState.bricksHit.add(brickIndex);
+            const bricks = document.querySelectorAll('.brick-container');
+            const brick = bricks[brickIndex];
+            
+            if (!brick) return;
+            
+            // Animate brick
+            const brickElement = brick.querySelector('.brick');
+            brickElement.classList.add('block-hit');
+            setTimeout(() => brickElement.classList.remove('block-hit'), 300);
+            
+            // Reveal SGPA
+            const sgpaElement = brick.querySelector('.brick-sgpa');
+            sgpaElement.classList.add('sgpa-reveal', 'revealed');
+            
+            // Create particles
+            const brickRect = brick.getBoundingClientRect();
+            const containerRect = document.getElementById('gameContainer').getBoundingClientRect();
+            createParticles(
+                brickRect.left - containerRect.left + 32,
+                containerRect.bottom - brickRect.bottom + 16
+            );
+            
+            // Play sound
+            playHitSound();
+            
+            // Check if all bricks hit
+            if (gameState.bricksHit.size === gameState.totalBricks && !gameState.flagReached) {
+                setTimeout(() => reachFlag(), 500);
+            }
+        }
+        
+        function reachFlag() {
+            gameState.flagReached = true;
+            
+            // Show CGPA
+            const cgpaDisplay = document.querySelector('.cgpa-display');
+            cgpaDisplay.classList.add('revealed');
+            
+            // Animate flag down
+            const flagTop = document.querySelector('.flag-pole-top');
+            flagTop.style.transform = 'translateY(280px)';
+            
+            // Play victory sound
+            playVictorySound();
+            
+            if (gameState.mode === 'auto') {
+                gameState.autoPlayComplete = true;
+            }
+        }
+        
+        function checkBrickCollisions() {
+            const bricks = document.querySelectorAll('.brick-container');
+            const marioBottom = gameState.marioY;
+            const marioTop = gameState.marioY + MARIO_HEIGHT;
+            const marioLeft = gameState.marioX;
+            const marioRight = gameState.marioX + MARIO_WIDTH;
+            
+            bricks.forEach((brick, index) => {
+                if (gameState.bricksHit.has(index)) return;
+                
+                const brickX = BRICK_START_X + (index * BRICK_SPACING);
+                const brickY = BRICK_Y;
+                const brickBottom = brickY;
+                const brickTop = brickY + 64;
+                const brickLeft = brickX;
+                const brickRight = brickX + 64;
+                
+                // Check if Mario is hitting brick from below
+                if (marioRight > brickLeft + 10 && 
+                    marioLeft < brickRight - 10 &&
+                    marioTop >= brickBottom - 5 &&
+                    marioTop <= brickBottom + 10 &&
+                    gameState.velocityY < 0) {
+                    hitBrick(index);
+                }
+            });
+        }
+        
+        function updatePhysics() {
+            // Apply gravity
+            gameState.velocityY += GRAVITY;
+            gameState.marioY += gameState.velocityY;
+            
+            // Ground collision
+            if (gameState.marioY >= 0) {
+                gameState.marioY = 0;
+                gameState.velocityY = 0;
+                gameState.isJumping = false;
+            }
+            
+            // Manual movement
+            if (gameState.mode === 'manual') {
+                if (gameState.isMovingRight) {
+                    gameState.marioX += MOVE_SPEED;
+                }
+                if (gameState.isMovingLeft) {
+                    gameState.marioX -= MOVE_SPEED;
+                }
+                
+                // Keep Mario in bounds
+                gameState.marioX = Math.max(0, Math.min(gameState.marioX, window.innerWidth - MARIO_WIDTH));
+            }
+            
+            // Check brick collisions
+            checkBrickCollisions();
+            
+            // Update Mario position
+            mario.style.left = gameState.marioX + 'px';
+            mario.style.bottom = (16 + gameState.marioY) + 'px';
+        }
+        
+        // Auto-play sequence
+        async function startAutoPlay() {
+            gameState.autoPlayComplete = false;
+            await sleep(1000);
+            
+            const bricks = document.querySelectorAll('.brick-container');
+            
+            // Walk and hit each brick
+            for (let i = 0; i < bricks.length; i++) {
+                if (gameState.mode !== 'auto') break;
+                
+                const targetX = BRICK_START_X + (i * BRICK_SPACING) - 20;
+                await moveMarioTo(targetX);
+                await sleep(200);
+                await jumpAndHit(i);
+                await sleep(500);
+            }
+            
+            // Move to flag
+            if (gameState.mode === 'auto') {
+                const flagX = BRICK_START_X + (bricks.length * BRICK_SPACING) + 300 - 30;
+                await moveMarioTo(flagX);
+                await sleep(200);
+                reachFlag();
+            }
+        }
+        
+        async function moveMarioTo(targetX) {
+            return new Promise((resolve) => {
+                const startX = gameState.marioX;
+                const distance = targetX - startX;
+                const duration = Math.abs(distance) * 2; // slower walking
+                let elapsed = 0;
+                
+                if (distance > 0) {
+                    mario.style.transform = 'scaleX(1)';
+                } else {
+                    mario.style.transform = 'scaleX(-1)';
+                }
+                
+                const interval = setInterval(() => {
+                    elapsed += 16;
+                    const progress = Math.min(elapsed / duration, 1);
+                    gameState.marioX = startX + (distance * progress);
+                    mario.style.left = gameState.marioX + 'px';
+                    
+                    if (progress >= 1) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 16);
+            });
+        }
+        
+        async function jumpAndHit(brickIndex) {
+            return new Promise((resolve) => {
+                jump();
+                setTimeout(() => {
+                    hitBrick(brickIndex);
+                    resolve();
+                }, 300);
+            });
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function resetGame() {
+            // Reset state
+            gameState.currentBrick = 0;
+            gameState.marioX = 50;
+            gameState.marioY = 0;
+            gameState.velocityY = 0;
+            gameState.isJumping = false;
+            gameState.autoPlayComplete = false;
+            gameState.flagReached = false;
+            gameState.bricksHit.clear();
+            
+            // Reset visuals
+            mario.style.left = '50px';
+            mario.style.bottom = '16px';
+            mario.style.transform = 'scaleX(1)';
+            
+            document.querySelectorAll('.brick-sgpa').forEach(el => {
+                el.classList.remove('sgpa-reveal', 'revealed');
+            });
+            
+            document.querySelector('.cgpa-display').classList.remove('revealed');
+            document.querySelector('.flag-pole-top').style.transform = 'translateY(0)';
+        }
+        
+        // Sound effects (placeholder - you can add real sound files)
+        function playJumpSound() {
+            // Add jump sound here
+            console.log('🎵 Jump!');
+        }
+        
+        function playHitSound() {
+            // Add hit sound here
+            console.log('🎵 Brick hit!');
+        }
+        
+        function playVictorySound() {
+            // Add victory sound here
+            console.log('🎵 Victory!');
+        }
+        
+        // Game loop
+        function gameLoop() {
+            updatePhysics();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Start game on load
+        window.addEventListener('load', () => {
+            gameLoop();
+            startAutoPlay();
         });
-
-        // Show end text
-        this.tweens.add({
-          targets: this.endText,
-          alpha: 1,
-          duration: 400,
-          ease: 'Linear'
-        });
-
-        playBeep(520, 0.2);
-
-        // Smooth fade transition
-        this.cameras.main.fade(700, 0, 0, 0, false, (camera, progress) => {
-          if (progress === 1) {
-            this.cameras.main.fadeIn(700, 0, 0, 0);
-          }
-        });
-      }
-
-      update() {
-        if (this.levelComplete) return;
-
-        const onGround = this.player.body.blocked.down || this.player.body.touching.down;
-
-        // Horizontal movement with smooth acceleration
-        if (this.cursors.left.isDown) {
-          this.player.setAccelerationX(-1000);
-          this.player.setFlipX(true);
-        } else if (this.cursors.right.isDown) {
-          this.player.setAccelerationX(1000);
-          this.player.setFlipX(false);
-        } else {
-          this.player.setAccelerationX(0);
-        }
-
-        // Jump (Up Arrow or Space)
-        if ((this.cursors.up.isDown || this.spaceKey.isDown) && onGround) {
-          this.player.setVelocityY(-420);
-        }
-
-        // Animation handling
-        if (!onGround) {
-          this.player.anims.play('jump', true);
-        } else if (Math.abs(this.player.body.velocity.x) > 10) {
-          this.player.anims.play('run', true);
-        } else {
-          this.player.anims.play('idle', true);
-        }
-      }
-    }
-
-    // Phaser game config
-    const config = {
-      type: Phaser.AUTO,
-      width: GAME_WIDTH,
-      height: GAME_HEIGHT,
-      pixelArt: true,
-      backgroundColor: '#5c94fc',
-      physics: {
-        default: 'arcade',
-        arcade: {
-          gravity: { y: 0 },
-          debug: false
-        }
-      },
-      scene: [AcademicJourneyScene]
-    };
-
-    new Phaser.Game(config);
-  </script>
+    </script>
 </body>
 </html>
