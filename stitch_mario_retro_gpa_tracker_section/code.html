@@ -1,0 +1,278 @@
+<html class="scroll-smooth" lang="en"><head></head><body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-body antialiased transition-colors duration-300">```html
+
+
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dharmendra N K R - Portfolio</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2563eb",
+              "background-light": "#ffffff",
+              "background-dark": "#0f172a",
+              "mario-sky": "#5c94fc",
+              "mario-sky-dark": "#1a1a2e",
+              "mario-ground": "#d45b12",
+              "mario-ground-dark": "#005c9e",
+              "mario-block": "#fb923c",
+              "mario-block-shadow": "#b45309",
+            },
+            fontFamily: {
+              display: ["'Press Start 2P'", "cursive"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+                'pixel': 'inset 4px 4px 0px 0px rgba(255,255,255,0.4), inset -4px -4px 0px 0px rgba(0,0,0,0.2)',
+                'pixel-pressed': 'inset 4px 4px 0px 0px rgba(0,0,0,0.2), inset -4px -4px 0px 0px rgba(255,255,255,0.4)',
+                'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                }
+            },
+            animation: {
+                float: 'float 3s ease-in-out infinite',
+            }
+          },
+        },
+      };
+    </script>
+<script>
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+    </script>
+<style>
+        .pixel-text {
+            text-shadow: 2px 2px 0px #000000;
+        }
+        .pixel-scroll::-webkit-scrollbar {
+            height: 12px;
+        }
+        .pixel-scroll::-webkit-scrollbar-track {
+            background: #000;
+        }
+        .pixel-scroll::-webkit-scrollbar-thumb {
+            background: #d45b12;
+            border: 2px solid #000;
+        }
+        .dark .pixel-scroll::-webkit-scrollbar-thumb {
+            background: #005c9e;
+        }
+        @keyframes drift {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100vw); }
+        }
+        .cloud-animate {
+            animation: drift 60s linear infinite;
+        }
+        .bg-mario-brick {
+            background-color: #d45b12;
+            background-image: 
+                linear-gradient(45deg, #b45309 25%, transparent 25%, transparent 75%, #b45309 75%, #b45309),
+                linear-gradient(45deg, #b45309 25%, transparent 25%, transparent 75%, #b45309 75%, #b45309);
+            background-position: 0 0, 16px 16px;
+            background-size: 32px 32px;
+        }
+        .dark .bg-mario-brick {
+            background-color: #005c9e;
+            background-image: 
+                linear-gradient(45deg, #004275 25%, transparent 25%, transparent 75%, #004275 75%, #004275),
+                linear-gradient(45deg, #004275 25%, transparent 25%, transparent 75%, #004275 75%, #004275);
+        }
+    </style>
+
+
+<nav class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16 items-center">
+<div class="flex-shrink-0 flex items-center">
+<span class="font-bold text-xl tracking-tight">Portfolio</span>
+</div>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors" href="#">About</a>
+<a class="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors" href="#">Projects</a>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" onclick="toggleDarkMode()">
+<svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<section class="w-full min-h-screen bg-mario-sky dark:bg-mario-sky-dark overflow-hidden relative flex flex-col justify-end transition-colors duration-500 pt-20">
+<div class="absolute top-24 left-0 right-0 z-20 text-center pointer-events-none">
+<h2 class="font-display text-white text-xl md:text-3xl pixel-text tracking-widest uppercase mb-2 drop-shadow-lg">Academic Journey</h2>
+<p class="font-display text-white/80 text-xs md:text-sm pixel-text drop-shadow-md">Level 1-1: GPA Tracker</p>
+</div>
+<div class="absolute inset-0 z-0 opacity-80 dark:opacity-20 pointer-events-none">
+<div class="absolute top-20 left-10 cloud-animate" style="animation-duration: 45s;">
+<svg fill="white" height="32" viewBox="0 0 64 32" width="64">
+<path d="M16 16 h32 v16 h-32 z M8 16 h8 v8 h-8 z M48 16 h8 v8 h-8 z M16 8 h32 v8 h-32 z"></path>
+</svg>
+</div>
+<div class="absolute top-40 left-1/2 cloud-animate" style="animation-duration: 65s; animation-delay: -20s;">
+<svg fill="white" height="48" viewBox="0 0 96 48" width="96">
+<path d="M24 24 h48 v24 h-48 z M12 24 h12 v12 h-12 z M72 24 h12 v12 h-12 z M24 12 h48 v12 h-48 z"></path>
+</svg>
+</div>
+<div class="absolute top-60 right-20 cloud-animate" style="animation-duration: 55s; animation-delay: -5s;">
+<svg fill="white" height="32" viewBox="0 0 64 32" width="64">
+<path d="M16 16 h32 v16 h-32 z M8 16 h8 v8 h-8 z M48 16 h8 v8 h-8 z M16 8 h32 v8 h-32 z"></path>
+</svg>
+</div>
+</div>
+<div class="w-full overflow-x-auto pixel-scroll z-10 pb-16 pt-32 h-full flex items-end">
+<div class="flex items-end px-8 mx-auto space-x-12 min-w-max pb-4 pl-[10vw]">
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float">9.0</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 1</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.2s;">8.8</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 2</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.4s;">9.1</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 3</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.1s;">9.5</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 4</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.3s;">9.2</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 5</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.5s;">9.4</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 6</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.2s;">9.0</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 7</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.4s;">9.8</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 8</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.1s;">9.5</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 9</span>
+</div>
+<div class="flex flex-col items-center gap-4 group relative">
+<div class="font-display text-[#fb923c] text-lg pixel-text mb-2 animate-float" style="animation-delay: 0.3s;">9.7</div>
+<div class="w-16 h-16 bg-mario-block border-4 border-black shadow-pixel flex items-center justify-center">
+<span class="font-display text-4xl text-white pixel-text mt-2">?</span>
+<div class="absolute top-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute top-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
+</div>
+<span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem 10</span>
+</div>
+<div class="relative flex flex-col items-center justify-end h-[450px] ml-16 min-w-[200px]">
+<img alt="Mario" class="absolute bottom-[30px] left-[-20px] w-20 h-20 object-contain z-30 drop-shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRj8Kfq-2b8d_ZuIArB5Gm9df7kYylyj8GsWZfnmX713nugZin7QATBZVqjL7ysP-3qDqCQdKfw6oNNi2auZlKFtjJwnkvMV60Zx7rf94AQZUvnwdZXlrS1Ri4Z1dCX9t4A5AG3Qu-eW6zrerS2JJCzRHM98V-Y6UuKl7DEyyLgY4q-0Wf-LB-6024fWKAf4dvU-DZEiM9biLI6p1INvjAffjYK58s_xMvXeInTnKz-LlyxC1jLyIlS8Qyc7PnXcS2rZH0_tdKj1U" style="image-rendering: pixelated;"/>
+<div class="absolute top-4 whitespace-nowrap z-30 flex flex-col items-center">
+<div class="font-display text-white text-3xl md:text-5xl pixel-text" style="text-shadow: 4px 4px 0 #000;">9.35</div>
+<div class="font-display text-white text-xs md:text-sm pixel-text bg-black/50 px-3 py-1 mt-2 rounded-full border border-white/20">Overall CGPA</div>
+</div>
+<div class="relative flex flex-col items-center">
+<div class="w-4 h-4 bg-green-500 border-2 border-black rounded-full z-20"></div>
+<div class="absolute top-4 left-1/2 w-16 h-16 z-10 origin-left">
+<svg class="w-full h-full drop-shadow-md" viewBox="0 0 100 100">
+<path d="M0,0 L80,30 L0,60 Z" fill="white" stroke="black" stroke-width="3"></path>
+</svg>
+</div>
+<div class="w-2 h-80 bg-green-600 border-x-2 border-black z-10 shadow-lg"></div>
+<div class="w-10 h-10 bg-[#7c7c7c] border-2 border-black z-20 shadow-pixel relative">
+<div class="absolute inset-1 border border-white/20"></div>
+</div>
+</div>
+</div>
+<div class="w-32"></div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-16 bg-mario-brick z-20 border-t-4 border-black w-full"></div>
+<div class="absolute bottom-0 left-0 right-0 h-16 bg-blue-900/50 mix-blend-multiply z-30 hidden dark:block pointer-events-none"></div>
+</section>
+
+</body></html>
