@@ -272,8 +272,8 @@
             <div class="absolute bottom-16 left-0 right-0 flex items-end justify-start px-8" style="height: 400px;">
                 
                 <!-- Mario Character -->
-                <div id="mario" class="absolute bottom-16 transition-all duration-300" style="left: 50px; width: 48px; height: 48px;">
-                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRj8Kfq-2b8d_ZuIArB5Gm9df7kYylyj8GsWZfnmX713nugZin7QATBZVqjL7ysP-3qDqCQdKfw6oNNi2auZlKFtjJwnkvMV60Zx7rf94AQZUvnwdZXlrS1Ri4Z1dCX9t4A5AG3Qu-eW6zrerS2JJCzRHM98V-Y6UuKl7DEyyLgY4q-0Wf-LB-6024fWKAf4dvU-DZEiM9biLI6p1INvjAffjYK58s_xMvXeInTnKz-LlyxC1jLyIlS8Qyc7PnXcS2rZH0_tdKj1U" 
+                <div id="mario" class="absolute bottom-24 transition-all duration-300" style="left: 50px; width: 64px; height: 64px;">
+                    <img src="{{ url_for('static', filename='images/mario.png') }}" 
                          alt="Mario" class="w-full h-full object-contain drop-shadow-lg"/>
                 </div>
                 
@@ -281,6 +281,9 @@
                 <div id="bricksContainer" class="flex items-end gap-12 absolute" style="left: 200px; bottom: 100px;">
                     {% for sem in semesters %}
                     <div class="brick-container flex flex-col items-center relative" data-semester="{{ sem.semester }}" data-sgpa="{{ sem.sgpa }}">
+                        <!-- Semester Label -->
+                        <span class="font-display text-xs text-white pixel-text mb-2 bg-black/40 px-2 py-1 rounded">Sem {{ sem.semester }}</span>
+                        
                         <!-- SGPA Display (hidden initially) -->
                         <div class="brick-sgpa font-display text-[#fb923c] text-lg pixel-text">
                             {{ sem.sgpa }}
@@ -294,15 +297,12 @@
                             <div class="absolute bottom-1 left-1 w-1 h-1 bg-[#fbbf24]"></div>
                             <div class="absolute bottom-1 right-1 w-1 h-1 bg-[#fbbf24]"></div>
                         </div>
-                        
-                        <!-- Semester Label -->
-                        <span class="font-display text-xs text-white pixel-text mt-2 bg-black/40 px-2 py-1 rounded">Sem {{ sem.semester }}</span>
                     </div>
                     {% endfor %}
                 </div>
                 
                 <!-- Flag Pole (CGPA) -->
-                <div id="flagPole" class="absolute flex flex-col items-center" style="left: calc(200px + {{ semesters|length * 112 }}px + 300px); bottom: 16px;">
+                <div id="flagPole" class="absolute flex flex-col items-center" style="left: calc(200px + {{ semesters|length * 112 }}px + 300px); bottom: 24px;">
                     <!-- CGPA Display -->
                     <div class="cgpa-display absolute top-[-80px] whitespace-nowrap flex flex-col items-center">
                         <div class="font-display text-white text-3xl md:text-5xl pixel-text" style="text-shadow: 4px 4px 0 #000;">{{ cgpa }}</div>
@@ -327,7 +327,7 @@
         </div>
         
         <!-- Ground -->
-        <div class="absolute bottom-0 left-0 right-0 h-16 bg-mario-brick z-20 border-t-4 border-black w-full"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-24 bg-mario-brick z-20 border-t-4 border-black w-full"></div>
     </section>
 
     <script>
@@ -349,13 +349,13 @@
         };
         
         const GRAVITY = 0.8;
-        const JUMP_POWER = -15;
+        const JUMP_POWER = -18;
         const MOVE_SPEED = 5;
         const BRICK_START_X = 200;
         const BRICK_SPACING = 112; // 64px brick + 48px gap
         const BRICK_Y = 100;
-        const MARIO_WIDTH = 48;
-        const MARIO_HEIGHT = 48;
+        const MARIO_WIDTH = 64;
+        const MARIO_HEIGHT = 64;
         
         // Get DOM elements
         const mario = document.getElementById('mario');
@@ -419,6 +419,7 @@
             if (gameState.isJumping) return;
             gameState.isJumping = true;
             gameState.velocityY = JUMP_POWER;
+            console.log('Mario jumping from Y:', gameState.marioY, 'with velocity:', gameState.velocityY);
             playJumpSound();
         }
         
@@ -501,8 +502,8 @@
         
         function checkBrickCollisions() {
             const bricks = document.querySelectorAll('.brick-container');
-            const marioBottom = gameState.marioY;
-            const marioTop = gameState.marioY + MARIO_HEIGHT;
+            const marioBottom = 24 + gameState.marioY;
+            const marioTop = 24 + gameState.marioY + MARIO_HEIGHT;
             const marioLeft = gameState.marioX;
             const marioRight = gameState.marioX + MARIO_WIDTH;
             
@@ -519,9 +520,10 @@
                 // Check if Mario is hitting brick from below
                 if (marioRight > brickLeft + 10 && 
                     marioLeft < brickRight - 10 &&
-                    marioTop >= brickBottom - 5 &&
-                    marioTop <= brickBottom + 10 &&
+                    marioTop >= brickBottom - 3 &&
+                    marioTop <= brickBottom + 8 &&
                     gameState.velocityY < 0) {
+                    console.log('Brick hit!', index, 'MarioTop:', marioTop, 'BrickBottom:', brickBottom);
                     hitBrick(index);
                 }
             });
@@ -530,10 +532,10 @@
         function updatePhysics() {
             // Apply gravity
             gameState.velocityY += GRAVITY;
-            gameState.marioY += gameState.velocityY;
+            gameState.marioY -= gameState.velocityY;
             
             // Ground collision
-            if (gameState.marioY >= 0) {
+            if (gameState.marioY <= 0) {
                 gameState.marioY = 0;
                 gameState.velocityY = 0;
                 gameState.isJumping = false;
@@ -557,7 +559,7 @@
             
             // Update Mario position
             mario.style.left = gameState.marioX + 'px';
-            mario.style.bottom = (16 + gameState.marioY) + 'px';
+            mario.style.bottom = (24 + gameState.marioY) + 'px';
         }
         
         // Auto-play sequence
@@ -641,7 +643,7 @@
             
             // Reset visuals
             mario.style.left = '50px';
-            mario.style.bottom = '16px';
+            mario.style.bottom = '24px';
             mario.style.transform = 'scaleX(1)';
             
             document.querySelectorAll('.brick-sgpa').forEach(el => {
