@@ -201,11 +201,15 @@
         
         .brick-sgpa {
             position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: -50px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
             opacity: 0;
             pointer-events: none;
+            white-space: nowrap;
+            width: 100%;
+            text-align: center;
         }
         
         .brick-sgpa.revealed {
@@ -349,7 +353,7 @@
         };
         
         const GRAVITY = 0.8;
-        const JUMP_POWER = -18;
+        const JUMP_POWER = -27;
         const MOVE_SPEED = 5;
         const BRICK_START_X = 200;
         const BRICK_SPACING = 112; // 64px brick + 48px gap
@@ -458,7 +462,16 @@
             // Animate brick
             const brickElement = brick.querySelector('.brick');
             brickElement.classList.add('block-hit');
-            setTimeout(() => brickElement.classList.remove('block-hit'), 300);
+            setTimeout(() => {
+                brickElement.classList.remove('block-hit');
+                // Dim the brick to grey and hide the ? mark
+                brickElement.style.backgroundColor = '#808080';
+                brickElement.style.backgroundImage = 'none';
+                const questionMark = brickElement.querySelector('span');
+                if (questionMark) {
+                    questionMark.style.display = 'none';
+                }
+            }, 300);
             
             // Reveal SGPA
             const sgpaElement = brick.querySelector('.brick-sgpa');
@@ -474,11 +487,6 @@
             
             // Play sound
             playHitSound();
-            
-            // Check if all bricks hit
-            if (gameState.bricksHit.size === gameState.totalBricks && !gameState.flagReached) {
-                setTimeout(() => reachFlag(), 500);
-            }
         }
         
         function reachFlag() {
@@ -500,6 +508,29 @@
             }
         }
         
+        function checkFlagCollision() {
+            if (gameState.flagReached) return;
+            
+            const flagX = BRICK_START_X + (gameState.totalBricks * BRICK_SPACING) + 300;
+            const marioBottom = 24 + gameState.marioY;
+            const marioTop = 24 + gameState.marioY + MARIO_HEIGHT;
+            const marioRight = gameState.marioX + MARIO_WIDTH;
+            const marioLeft = gameState.marioX;
+            
+            // Check if Mario touches the flag pole (vertical pole area)
+            // More lenient for manual mode
+            const horizontalRange = gameState.mode === 'manual' ? 30 : 10;
+            const minHeight = gameState.mode === 'manual' ? 80 : 100;
+            
+            if (marioRight > flagX - horizontalRange && 
+                marioLeft < flagX + horizontalRange &&
+                marioTop >= minHeight &&
+                gameState.velocityY < 0) {
+                console.log('Flag pole touched! Mode:', gameState.mode);
+                reachFlag();
+            }
+        }
+        
         function checkBrickCollisions() {
             const bricks = document.querySelectorAll('.brick-container');
             const marioBottom = 24 + gameState.marioY;
@@ -517,13 +548,17 @@
                 const brickLeft = brickX;
                 const brickRight = brickX + 64;
                 
+                // More relaxed collision for manual mode, stricter for auto
+                const horizontalThreshold = gameState.mode === 'manual' ? 15 : 25;
+                const verticalRange = gameState.mode === 'manual' ? 8 : 5;
+                
                 // Check if Mario is hitting brick from below
-                if (marioRight > brickLeft + 10 && 
-                    marioLeft < brickRight - 10 &&
-                    marioTop >= brickBottom - 3 &&
-                    marioTop <= brickBottom + 8 &&
+                if (marioRight > brickLeft + horizontalThreshold && 
+                    marioLeft < brickRight - horizontalThreshold &&
+                    marioTop >= brickBottom - 2 &&
+                    marioTop <= brickBottom + verticalRange &&
                     gameState.velocityY < 0) {
-                    console.log('Brick hit!', index, 'MarioTop:', marioTop, 'BrickBottom:', brickBottom);
+                    console.log('Brick hit! Mode:', gameState.mode, 'Index:', index, 'MarioTop:', marioTop, 'BrickBottom:', brickBottom);
                     hitBrick(index);
                 }
             });
@@ -557,6 +592,9 @@
             // Check brick collisions
             checkBrickCollisions();
             
+            // Check flag pole collision
+            checkFlagCollision();
+            
             // Update Mario position
             mario.style.left = gameState.marioX + 'px';
             mario.style.bottom = (24 + gameState.marioY) + 'px';
@@ -573,7 +611,15 @@
             for (let i = 0; i < bricks.length; i++) {
                 if (gameState.mode !== 'auto') break;
                 
-                const targetX = BRICK_START_X + (i * BRICK_SPACING) - 20;
+                // Get actual brick position from DOM
+                const brickElement = bricks[i];
+                const brickRect = brickElement.getBoundingClientRect();
+                const gameContainerRect = document.getElementById('gameContainer').getBoundingClientRect();
+                
+                // Calculate brick center position relative to game container
+                const brickCenterX = brickRect.left - gameContainerRect.left + brickRect.width / 2;
+                const targetX = brickCenterX - (MARIO_WIDTH / 2);
+                
                 await moveMarioTo(targetX);
                 await sleep(200);
                 await jumpAndHit(i);
@@ -582,9 +628,12 @@
             
             // Move to flag
             if (gameState.mode === 'auto') {
-                const flagX = BRICK_START_X + (bricks.length * BRICK_SPACING) + 300 - 30;
+                const flagX = BRICK_START_X + (bricks.length * BRICK_SPACING) + 300;
                 await moveMarioTo(flagX);
                 await sleep(200);
+                // Jump to touch the flag pole
+                jump();
+                await sleep(400);
                 reachFlag();
             }
         }
@@ -648,6 +697,15 @@
             
             document.querySelectorAll('.brick-sgpa').forEach(el => {
                 el.classList.remove('sgpa-reveal', 'revealed');
+            });
+            
+            document.querySelectorAll('.brick').forEach(brick => {
+                brick.style.backgroundColor = '';
+                brick.style.backgroundImage = '';
+                const questionMark = brick.querySelector('span');
+                if (questionMark) {
+                    questionMark.style.display = '';
+                }
             });
             
             document.querySelector('.cgpa-display').classList.remove('revealed');
