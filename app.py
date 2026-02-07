@@ -4,16 +4,14 @@ app = Flask(__name__)
 
 # SGPA data for each semester
 semester_data = [
-    {"semester": 1, "sgpa": 9.0},
-    {"semester": 2, "sgpa": 8.8},
-    {"semester": 3, "sgpa": 9.1},
-    {"semester": 4, "sgpa": 9.5},
-    {"semester": 5, "sgpa": 9.2},
-    {"semester": 6, "sgpa": 9.4},
-    {"semester": 7, "sgpa": 9.0},
-    {"semester": 8, "sgpa": 9.8},
-    {"semester": 9, "sgpa": 9.5},
-    {"semester": 10, "sgpa": 9.7}
+    {"semester": 1, "sgpa": 8.2},
+    {"semester": 2, "sgpa": 8.81},
+    {"semester": 3, "sgpa": 8.2},
+    {"semester": 4, "sgpa": 8.54},
+    {"semester": 5, "sgpa": 8.64},
+    {"semester": 6, "sgpa": 9.07},
+    {"semester": 7, "sgpa": 9.04},
+
 ]
 
 # Calculate CGPA
